@@ -1,0 +1,8 @@
+../Core/Src/l3g4200d.c:23:13:cs_low	16	static
+../Core/Src/l3g4200d.c:28:13:cs_high	16	static
+../Core/Src/l3g4200d.c:33:19:write_reg	24	static
+../Core/Src/l3g4200d.c:44:19:read_reg	40	static
+../Core/Src/l3g4200d.c:60:19:L3G4200D_EnableINT1	24	static
+../Core/Src/l3g4200d.c:68:19:L3G4200D_Init	40	static
+../Core/Src/l3g4200d.c:133:19:L3G4200D_ReadRaw	48	static
+../Core/Src/l3g4200d.c:152:19:L3G4200D_ReadDPS	32	static

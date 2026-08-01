@@ -1,0 +1,32 @@
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:22:9:csp::internal::WaitingAlt::WaitingAlt()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:24:14:void csp::internal::WaitingAlt::set(csp::internal::AltScheduler*, EventBits_t, void*, size_t)	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:31:14:void csp::internal::WaitingAlt::clear()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:38:14:bool csp::internal::WaitingAlt::isActive() const	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:67:14:bool csp::internal::AltChanSyncBase::hasReaderWaiting() const	3
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:71:14:bool csp::internal::AltChanSyncBase::hasWriterWaiting() const	3
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:81:14:void csp::internal::AltChanSyncBase::clearWaitingIn()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:82:14:void csp::internal::AltChanSyncBase::clearWaitingOut()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:85:27:QueueDefinition* csp::internal::AltChanSyncBase::getMutex()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:86:22:tskTaskControlBlock* csp::internal::AltChanSyncBase::getWaitingInTask() const	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:87:22:tskTaskControlBlock* csp::internal::AltChanSyncBase::getWaitingOutTask() const	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:88:15:void* csp::internal::AltChanSyncBase::getNonAltInDataPtr() const	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:89:21:const void* csp::internal::AltChanSyncBase::getNonAltOutDataPtr() const	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:96:21:csp::internal::WaitingAlt& csp::internal::AltChanSyncBase::getWaitingInAlt()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:97:21:csp::internal::WaitingAlt& csp::internal::AltChanSyncBase::getWaitingOutAlt()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt.h:31:21:csp::internal::Guard::~Guard()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt.h:31:21:virtual csp::internal::Guard::~Guard()	1
+../lib/csp4cmsis/src/alt_channel_sync.cpp:7:1:csp::internal::AltChanSyncBase::AltChanSyncBase()	1
+../lib/csp4cmsis/src/alt_channel_sync.cpp:14:1:csp::internal::AltChanSyncBase::~AltChanSyncBase()	2
+../lib/csp4cmsis/src/alt_channel_sync.cpp:14:1:virtual csp::internal::AltChanSyncBase::~AltChanSyncBase()	1
+../lib/csp4cmsis/src/alt_channel_sync.cpp:18:6:bool csp::internal::AltChanSyncBase::tryHandshake(void*, size_t, bool)	14
+../lib/csp4cmsis/src/alt_channel_sync.cpp:60:6:void csp::internal::AltChanSyncBase::registerWaitingTask(void*, bool)	2
+../lib/csp4cmsis/src/alt_channel_sync.cpp:72:6:virtual bool csp::internal::ChanInGuard::enable(csp::internal::AltScheduler*, EventBits_t)	3
+../lib/csp4cmsis/src/alt_channel_sync.cpp:87:6:virtual void csp::internal::ChanInGuard::activate()	6
+../lib/csp4cmsis/src/alt_channel_sync.cpp:105:6:virtual bool csp::internal::ChanInGuard::disable()	2
+../lib/csp4cmsis/src/alt_channel_sync.cpp:115:6:virtual bool csp::internal::ChanOutGuard::enable(csp::internal::AltScheduler*, EventBits_t)	3
+../lib/csp4cmsis/src/alt_channel_sync.cpp:128:6:virtual void csp::internal::ChanOutGuard::activate()	6
+../lib/csp4cmsis/src/alt_channel_sync.cpp:144:6:virtual bool csp::internal::ChanOutGuard::disable()	2
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:125:11:csp::internal::ChanOutGuard::~ChanOutGuard()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:125:11:virtual csp::internal::ChanOutGuard::~ChanOutGuard()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:107:11:csp::internal::ChanInGuard::~ChanInGuard()	1
+/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/lib/csp4cmsis/inc/csp/alt_channel_sync.h:107:11:virtual csp::internal::ChanInGuard::~ChanInGuard()	1

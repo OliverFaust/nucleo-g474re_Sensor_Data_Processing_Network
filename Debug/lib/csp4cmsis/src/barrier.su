@@ -1,0 +1,3 @@
+../lib/csp4cmsis/src/barrier.cpp:18:1:csp::internal::Barrier::Barrier(size_t)	16	static
+../lib/csp4cmsis/src/barrier.cpp:34:1:csp::internal::Barrier::~Barrier()	16	static
+../lib/csp4cmsis/src/barrier.cpp:48:6:void csp::internal::Barrier::sync()	24	static
