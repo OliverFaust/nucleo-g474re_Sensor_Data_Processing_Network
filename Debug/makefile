@@ -64,34 +64,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D
+BUILD_ARTIFACT_NAME := nucleo-g474re_Sensor_Data_Processing_Network
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.elf \
+nucleo-g474re_Sensor_Data_Processing_Network.elf \
 
 MAP_FILES += \
-CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.map \
+nucleo-g474re_Sensor_Data_Processing_Network.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.list \
+nucleo-g474re_Sensor_Data_Processing_Network.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.elf secondary-outputs
+main-build: nucleo-g474re_Sensor_Data_Processing_Network.elf secondary-outputs
 
 # Tool invocations
-CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.elf CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.map: $(OBJS) $(USER_OBJS) /media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/CSP4CMSIS/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld" -Wl,-Map="CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+nucleo-g474re_Sensor_Data_Processing_Network.elf nucleo-g474re_Sensor_Data_Processing_Network.map: $(OBJS) $(USER_OBJS) /media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "nucleo-g474re_Sensor_Data_Processing_Network.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld" -Wl,-Map="nucleo-g474re_Sensor_Data_Processing_Network.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -100,14 +100,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.list"
+nucleo-g474re_Sensor_Data_Processing_Network.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "nucleo-g474re_Sensor_Data_Processing_Network.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.elf CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.list CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.map default.size.stdout
+	-$(RM) default.size.stdout nucleo-g474re_Sensor_Data_Processing_Network.elf nucleo-g474re_Sensor_Data_Processing_Network.list nucleo-g474re_Sensor_Data_Processing_Network.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
