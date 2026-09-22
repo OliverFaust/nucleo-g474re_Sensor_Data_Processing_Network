@@ -52,25 +52,24 @@ public:
     	auto trigger_reader = g_trigger_chan.reader();
         vTaskDelay(pdMS_TO_TICKS(10));
         L3G4200D_t gyro;
-
         gyro.hspi = &hspi2;
         gyro.cs_port = GPIOB;
         gyro.cs_pin = GPIO_PIN_12;
 
         if (HAL_ERROR == L3G4200D_Init(&gyro, L3G4200D_SCALE_250DPS)){
-        	printf("HAL-ERROR during init\r\n");
+            printf("HAL-ERROR during init\r\n");
         }
         if (HAL_ERROR == L3G4200D_EnableINT1(&gyro)){
-        	printf("HAL-ERROR during INT1 enable\r\n");
-        	return;
+            printf("HAL-ERROR during INT1 enable\r\n");
+            return;
         }
 
         Message msg;
         L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);
         while(true) {
-        	trigger_reader >> t;
-			L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);
-			out << msg;
+            trigger_reader >> t;
+            L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);
+            out << msg;
         }
     }
 };
@@ -86,7 +85,6 @@ public:
     const char* name() const override { return "ShakeDetect"; }
 
     void run() override {
-
         const float alpha = 0.02f;          // mean filter speed
         const int window_size = 10;         // ~100ms if 100Hz
         const float threshold_on  = 3000.0f;
@@ -150,9 +148,7 @@ public:
     const char* name() const override { return "UI"; }
 
     void run() override {
-
         Result res;
-
         while (true) {
             in >> res;
 
@@ -182,7 +178,6 @@ void MainApp_Task(void* params) {
         InParallel(pL3g4200d, pShakeDetect, pUI),
         ExecutionMode::StaticNetwork
     );
-
     // Run() returns immediately in StaticNetwork mode; the task must
     // delete itself rather than fall off the end of the function.
     vTaskDelete(NULL);

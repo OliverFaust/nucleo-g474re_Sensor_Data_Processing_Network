@@ -186,4 +186,3 @@ int Alternative::fairSelect() {
 }
 
 } // namespace csp
-

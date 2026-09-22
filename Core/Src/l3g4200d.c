@@ -97,18 +97,15 @@ HAL_StatusTypeDef L3G4200D_Init(L3G4200D_t *dev, L3G4200D_Scale_t scale)
     write_reg(dev, 0x24, 0x80);
     HAL_Delay(10); // Give it time to reload from flash
     read_reg(dev, 0x24, &verify);
-    printf("REG_CTRL5 = 0x%02X\r\n", verify);
 
     // 2. Set ODR and Power Mode (CTRL1: 0x20)
     // 0x0F = 100Hz ODR, 12.5 BW, Normal Mode, All axes enabled
     write_reg(dev, 0x20, 0x0F);
     read_reg(dev, 0x20, &verify);
-    printf("REG_CTRL1 = 0x%02X\r\n", verify);
 
     // 3. Disable High Pass Filter (CTRL2: 0x21)
     write_reg(dev, 0x21, 0x00);
     read_reg(dev, 0x21, &verify);
-    printf("REG_CTRL2 = 0x%02X\r\n", verify);
 
     // 4. Set Scale and Disable BDU for now (CTRL4: 0x23)
     // We set BDU=0 (Bit 7) to ensure registers update continuously
@@ -121,7 +118,6 @@ HAL_StatusTypeDef L3G4200D_Init(L3G4200D_t *dev, L3G4200D_Scale_t scale)
     }
     write_reg(dev, 0x23, ctrl4);
     read_reg(dev, 0x23, &verify);
-    printf("REG_CTRL4 = 0x%02X\r\n", verify);
 
     // 5. Verification: Read back CTRL1 to make sure the write "stuck"
     read_reg(dev, 0x20, &verify);

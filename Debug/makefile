@@ -90,8 +90,8 @@ all: main-build
 main-build: nucleo-g474re_Sensor_Data_Processing_Network.elf secondary-outputs
 
 # Tool invocations
-nucleo-g474re_Sensor_Data_Processing_Network.elf nucleo-g474re_Sensor_Data_Processing_Network.map: $(OBJS) $(USER_OBJS) /media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "nucleo-g474re_Sensor_Data_Processing_Network.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D/STM32G474RETX_FLASH.ld" -Wl,-Map="nucleo-g474re_Sensor_Data_Processing_Network.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+nucleo-g474re_Sensor_Data_Processing_Network.elf nucleo-g474re_Sensor_Data_Processing_Network.map: $(OBJS) $(USER_OBJS) /media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/nucleo-g474re_Sensor_Data_Processing_Network/STM32G474RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "nucleo-g474re_Sensor_Data_Processing_Network.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/media/of6/c615665c-b372-4e0b-8c40-ca60b0369c46/The_Way_of_Static_Process_Networks/GithubCode/nucleo-g474re_Sensor_Data_Processing_Network/STM32G474RETX_FLASH.ld" -Wl,-Map="nucleo-g474re_Sensor_Data_Processing_Network.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
