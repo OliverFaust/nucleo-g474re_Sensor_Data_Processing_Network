@@ -197,4 +197,4 @@ Shake ended.
 - UART output mutex to prevent interleaved printf output across CSP processes
 
 # Author
-Ningrong (Rong) Lei — ported and adapted for NUCLEO-G474RE from the original NUCLEO-F401RE project by Oliver Faust
+Dr Dr Oliver Faust
