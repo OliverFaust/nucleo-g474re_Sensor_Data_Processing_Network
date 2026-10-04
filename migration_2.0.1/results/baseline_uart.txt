@@ -1,0 +1,11 @@
+# elf: baseline.elf sha256=ecdd0fae4bbf78ad88ed38132944747c0b474bf8be0d445c9357b72dad6ed571
+# port: /dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_002000353234510836303532-if02
+# start: 2026-10-04 08:32:59
+
+--- Launching CSP Static Network (Zero-Heap) ---
+L3G4200D Fault: WHO_AM_I failed after 100 attempts. Last value: 0x00
+HAL-ERROR during init
+
+# TIMEOUT after 20 s
+
+# end: 2026-10-04 08:33:21 (20 s)
