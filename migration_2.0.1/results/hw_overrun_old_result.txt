@@ -1,0 +1,3 @@
+phase 1 (reader not waiting): interrupts=10 ISR-write failures=10 first wait=4 ms | phase 2 burst: interrupts=10 ISR-write failures=9 triggers taken=1 samples taken=1 | totals after 8 s: interrupts=939 failures=19 triggers=938 samples=946 done=1
+phase 1 (reader not waiting): interrupts=10 ISR-write failures=10 first wait=8 ms | phase 2 burst: interrupts=10 ISR-write failures=9 triggers taken=1 samples taken=1 | totals after 8 s: interrupts=935 failures=19 triggers=932 samples=941 done=1
+phase 1 (reader not waiting): interrupts=10 ISR-write failures=10 first wait=4 ms | phase 2 burst: interrupts=11 ISR-write failures=9 triggers taken=2 samples taken=2 | totals after 8 s: interrupts=935 failures=19 triggers=932 samples=941 done=1

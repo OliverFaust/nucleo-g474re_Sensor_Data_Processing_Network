@@ -36,7 +36,7 @@ HAL_StatusTypeDef L3G4200D_ReadRaw(L3G4200D_t *dev, int16_t *x, int16_t *y, int1
 HAL_StatusTypeDef L3G4200D_ReadDPS(L3G4200D_t *dev, float *x, float *y, float *z);
 HAL_StatusTypeDef read_reg(L3G4200D_t *dev, uint8_t reg, uint8_t *data);
 HAL_StatusTypeDef write_reg(L3G4200D_t *dev, uint8_t reg, uint8_t data);
-HAL_StatusTypeDef L3G4200D_EnableINT1(L3G4200D_t *dev);
+HAL_StatusTypeDef L3G4200D_EnableDRDY(L3G4200D_t *dev);
 
 #ifdef __cplusplus
 }

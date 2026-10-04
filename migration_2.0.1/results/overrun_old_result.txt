@@ -1,0 +1,3 @@
+done=1 interrupts=10 ISR-write failures=9 triggers taken by L3g4200d=1 samples taken by ShakeDetect=1
+done=1 interrupts=10 ISR-write failures=9 triggers taken by L3g4200d=1 samples taken by ShakeDetect=1
+done=1 interrupts=10 ISR-write failures=9 triggers taken by L3g4200d=1 samples taken by ShakeDetect=1

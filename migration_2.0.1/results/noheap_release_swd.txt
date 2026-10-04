@@ -1,0 +1,13 @@
+stack  L3g4200d      1024 B: used   428 B, never touched   596 B
+stack  ShakeDetect   1024 B: used   388 B, never touched   636 B
+stack  UI            1024 B: used   212 B, never touched   812 B
+thread L3g4200d     priority  8  name "L3g4200d"
+thread ShakeDetect  priority  8  name "ShakeDetect"
+thread UI           priority  8  name "UI"
+stack  MainApp       1536 B: used   308 B, never touched  1228 B
+stack  defaultTask   1024 B: used   104 B, never touched   920 B
+thread MainApp      priority 16  name "MainApp"
+thread defaultTask  priority 24  name "defaultTask"
+FreeRTOS heap: free 0 B, minimum ever free 0 B, allocations 0, frees 0
+newlib sbrk: __sbrk_heap_end = 0x00000000 (_end = 0x200032b8)
+NVIC EXTI0 priority 5

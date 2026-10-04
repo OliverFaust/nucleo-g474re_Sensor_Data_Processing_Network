@@ -1,0 +1,7 @@
+stack  L3g4200d      1024 B: used   540 B, never touched   484 B
+stack  ShakeDetect   1024 B: used   512 B, never touched   512 B
+stack  UI            1024 B: used   484 B, never touched   540 B
+stack  MainApp       1536 B: used   572 B, never touched   964 B
+stack  defaultTask   1024 B: used   152 B, never touched   872 B
+FreeRTOS heap: free 0 B, minimum ever free 0 B, allocations 0, frees 0
+newlib sbrk: __sbrk_heap_end = 0x20003730 (_end = 0x20003328)
