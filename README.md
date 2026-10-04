@@ -194,7 +194,7 @@ This is good practice for real-time embedded systems.
 
 ## Memory
 
-Measured on the board (Debug and Release):
+Measured on the board with the L3G4200D connected (Debug and Release):
 
 - **FreeRTOS heap: not used.** `pvPortMalloc()` is never called (0 allocations). The three processes,
   `MainApp`, CubeMX's `defaultTask`, and FreeRTOS's idle and timer tasks all have static stacks and
@@ -203,6 +203,9 @@ Measured on the board (Debug and Release):
   (`configTOTAL_HEAP_SIZE`) is therefore set to only 1 KB.
 - **C library heap: 1 KB.** newlib's `printf()` allocates its `stdout` buffer with `malloc()` on first
   use (1032 B from `_sbrk()`). This is the only dynamic allocation.
+- **Stacks used** (Debug, after shaking; Release at rest in brackets): `L3g4200d` 540 B (428 B),
+  `ShakeDetect` 512 B (388 B), `UI` 484 B (212 B), each of 1 KB; `MainApp` 572 B (308 B) of 1.5 KB;
+  `defaultTask` 152 B (104 B) of 1 KB.
 
 # 9. Learning Outcomes
 This project demonstrates:

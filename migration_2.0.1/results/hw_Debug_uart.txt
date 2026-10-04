@@ -1,0 +1,9 @@
+# elf: final_Debug.elf sha256=83126e0c7b1eaa22dbb978c61b432a5d6dc9f6a53aa5ffaaec3fd7daf5434dc6
+# port: /dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_002000353234510836303532-if02
+# start: 2026-10-04 09:08:41
+
+--- Launching CSP Static Network (Zero-Heap) ---
+
+# TIMEOUT after 20 s
+
+# end: 2026-10-04 09:09:03 (20 s)

@@ -1,0 +1,63 @@
+# elf: baseline.elf sha256=ecdd0fae4bbf78ad88ed38132944747c0b474bf8be0d445c9357b72dad6ed571
+# port: /dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_002000353234510836303532-if02
+# start: 2026-10-04 09:15:06
+
+--- Launching CSP Static Network (Zero-Heap) ---
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+>>> SHAKE DETECTED! <<<
+Shake ended.
+
+# TIMEOUT after 120 s
+
+# end: 2026-10-04 09:17:08 (120 s)

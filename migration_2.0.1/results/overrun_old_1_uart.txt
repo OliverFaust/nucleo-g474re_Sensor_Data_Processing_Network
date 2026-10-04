@@ -1,0 +1,9 @@
+# elf: nucleo-g474re_Sensor_Data_Processing_Network.elf sha256=99902277f5ebdbd95837c86c44c55149caeb825bdcbe16452788d31e452f2a85
+# port: /dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_002000353234510836303532-if02
+# start: 2026-10-04 09:09:36
+
+--- Launching CSP Static Network (Zero-Heap) ---
+
+# TIMEOUT after 8 s
+
+# end: 2026-10-04 09:09:46 (8 s)

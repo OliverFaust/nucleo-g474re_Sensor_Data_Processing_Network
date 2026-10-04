@@ -1,0 +1,11 @@
+# elf: nucleo-g474re_Sensor_Data_Processing_Network.elf sha256=f04a2206a827ce7e77d7b705e582d9c4aa1dd52f9f6b14083f57f1272234d544
+# port: /dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_002000353234510836303532-if02
+# start: 2026-10-04 08:55:09
+
+--- Launching CSP Static Network (Zero-Heap) ---
+L3G4200D Fault: WHO_AM_I failed after 100 attempts. Last value: 0x00
+HAL-ERROR during init
+
+# TIMEOUT after 8 s
+
+# end: 2026-10-04 08:55:19 (8 s)
