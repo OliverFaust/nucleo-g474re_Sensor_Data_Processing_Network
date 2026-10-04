@@ -1,26 +1,34 @@
 #include "application.h"
 #include "l3g4200d.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"  // StaticTask_t: the control block of a statically created thread
 #include "csp/csp4cmsis.h"
 #include <cstdio>
 #include <cmath>
 extern "C" {
 #include "main.h"
-#include "cmsis_os.h"
 }
 
 // --- Configuration ---
 // PB0 (EXTI0, rising edge), wired to the gyro's DRDY/INT2 pin.
 #define GYRO_DRDY_PIN GPIO_PIN_0
-// main.c initializes hspi2, not hspi3; the CS pin it configures
-// (GPIOB/GPIO_PIN_12) matches what this driver expects below, so hspi2 is
-// almost certainly the intended handle. Update this if your board really
-// does use SPI3 and main.c is the one that's incomplete.
+// SPI2 (PB13 SCK, PB14 MISO, PB15 MOSI), initialised by main.c; chip select PB12.
 extern SPI_HandleTypeDef hspi2;
 
 using namespace csp;
 
 struct trigger_t {};
-static Channel<trigger_t> g_trigger_chan;
+
+// --- Trigger channel: written by the data-ready interrupt ---
+// An interrupt cannot use a rendezvous channel: it cannot wait for a partner. It writes into
+// a buffered channel instead, through the channel's ISR writer end. Capacity 1 with the
+// KeepNewest policy: the write never blocks and never fails. The trigger carries no data, it
+// only says "a new sample is waiting in the sensor", and the sensor keeps only its latest
+// sample: triggers that arrive while L3g4200d is busy merge into one, and the next read gets
+// the latest sample. A trigger is never lost, so the data-ready line, which goes low only when
+// the sample is read, cannot get stuck high.
+static SamplingBufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
+static IsrChanout<trigger_t> g_trigger_isr = g_trigger_chan.isrWriter();
 
 struct Message {
 	float x,y,z;
@@ -32,10 +40,7 @@ struct Result {
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == GYRO_DRDY_PIN) {
-        // putFromISR() performs the yield internally, on the caller's
-        // behalf, before it returns -- no separate xHigherPriorityTaskWoken
-        // handling or portYIELD_FROM_ISR() call is needed here.
-        g_trigger_chan.writer().putFromISR(trigger_t{});
+        g_trigger_isr.putFromISR(trigger_t{});  // never blocks; with KeepNewest always succeeds
     }
 }
 
@@ -49,7 +54,7 @@ public:
     void run() override {
     	trigger_t t;
     	auto trigger_reader = g_trigger_chan.reader();
-        vTaskDelay(pdMS_TO_TICKS(10));
+        SleepFor(Milliseconds(10).to_ticks());
         L3G4200D_t gyro;
         gyro.hspi = &hspi2;
         gyro.cs_port = GPIOB;
@@ -160,8 +165,22 @@ public:
     }
 };
 
-void MainApp_Task(void* params) {
-    vTaskDelay(pdMS_TO_TICKS(10));
+// Start order. MainApp runs at a higher priority than the network it launches, so
+// Run(..., StaticNetwork) only creates the three process threads and returns: none of them
+// can preempt MainApp, and they first run after MainApp has printed its banner and exited.
+// All stay below CubeMX's defaultTask (osPriorityNormal).
+static constexpr osPriority_t MAIN_APP_PRIORITY = osPriorityBelowNormal;
+static constexpr osPriority_t NETWORK_PRIORITY  = osPriorityLow;
+
+// MainApp's stack and control block are static: creating the thread takes no heap.
+// CMSIS-RTOS2 counts the stack in bytes: 384 words = 1.5 KB. Measured on the NUCLEO-G474RE:
+// MainApp uses 572 B (Debug, -O0) and 308 B (Release, -Os) of it.
+alignas(8) static uint32_t mainAppStack[384];
+static StaticTask_t mainAppControlBlock;
+
+void MainApp_Task(void* argument) {
+    (void)argument;
+    osDelay(10);
 
     printf("\r\n--- Launching CSP Static Network (Zero-Heap) ---\r\n");
 
@@ -175,24 +194,23 @@ void MainApp_Task(void* params) {
     // Run parallel processes using static execution
     Run(
         InParallel(pL3g4200d, pShakeDetect, pUI),
-        ExecutionMode::StaticNetwork
+        ExecutionMode::StaticNetwork,
+        NETWORK_PRIORITY
     );
-    // Run() returns immediately in StaticNetwork mode; the task must
-    // delete itself rather than fall off the end of the function.
-    vTaskDelete(NULL);
+    // Run() returns immediately in StaticNetwork mode; the thread must
+    // end itself rather than fall off the end of the function.
+    osThreadExit();
 }
 
 void csp_app_main_init(void) {
-	// MainApp_Task's own stack: it only builds three static objects and
-	// calls Run() -- the gyro/SPI work all happens on L3g4200d's own
-	// statically-allocated CSProcessStatic<256> stack, not this one. 512
-	// words (2048 bytes) is ample headroom for printf/vsnprintf, which can
-	// be surprisingly stack-hungry under newlib. This is also a
-	// heap-backed allocation (xTaskCreate, not xTaskCreateStatic) -- see
-	// configTOTAL_HEAP_SIZE in FreeRTOSConfig.h, which previously was too
-	// small to satisfy even the old 2048-word request.
-	BaseType_t status = xTaskCreate(MainApp_Task, "MainApp", 512, NULL, tskIDLE_PRIORITY + 3, NULL);
-	if (status != pdPASS) {
-	    printf("ERROR: MainApp_Task creation failed!\r\n");
-	}
+    osThreadAttr_t attr = {};
+    attr.name       = "MainApp";
+    attr.stack_mem  = mainAppStack;
+    attr.stack_size = sizeof(mainAppStack);
+    attr.cb_mem     = &mainAppControlBlock;
+    attr.cb_size    = sizeof(mainAppControlBlock);
+    attr.priority   = MAIN_APP_PRIORITY;
+    if (osThreadNew(MainApp_Task, NULL, &attr) == NULL) {
+        printf("ERROR: MainApp_Task creation failed!\r\n");
+    }
 }
