@@ -6,12 +6,22 @@ This project demonstrates interrupt-driven shake detection on the STM32 NUCLEO-G
 It uses:
 
 - STM32CubeIDE
-- FreeRTOS (CMSIS-RTOS)
-- CSP4CMSIS (Communicating Sequential Processes)
-- Interrupt-driven SPI acquisition
+- FreeRTOS with the CMSIS-RTOS v2 API (STM32CubeMX `CMSIS_V2` interface)
+- CSP4CMSIS 2.0.1 (Communicating Sequential Processes), in `lib/csp4cmsis/` (unmodified; see `lib/csp4cmsis/VERSION`)
+- Interrupt-triggered SPI acquisition (the sensor's data-ready interrupt triggers each SPI read)
 - Real-time signal processing
 
-The system detects when the sensor is shaken and prints a message to the serial terminal.
+The system detects when the sensor is shaken and prints a message to the serial terminal
+(LPUART1, the ST-LINK virtual COM port, 115200 baud).
+
+Tested with:
+
+| Tool | Version |
+|---|---|
+| STM32CubeIDE | 2.1.0 (GNU Tools for STM32 14.3.rel1) |
+| STM32CubeMX (only to regenerate code) | 6.17.0 |
+| STM32Cube FW_G4 | V1.6.3 (FreeRTOS 10.3.1) |
+| CSP4CMSIS | 2.0.1 |
 
 ---
 
@@ -40,6 +50,7 @@ This project uses **SPI2** on the NUCLEO-G474RE.
 Important:
 - SPI is configured in master mode, Mode 3 (CPOL=1, CPHA=1), 8-bit frames, ~5.3 MHz (SYSCLK 170 MHz / APB1 ÷1 / prescaler 32), keeping clear margin under the sensor's 10 MHz SPI limit.
 - Chip Select (CS) is controlled in software via GPIO, not hardware NSS.
+- All of this is set in the STM32CubeMX project (`CSP4CMSIS_NUCLEO-G474RE_Shake_Detection_L3G4200D.ioc`), so CubeMX generates it.
 - **The Data-Ready signal must be wired to the gyro's DRDY/INT2 pin, not its INT1 pin.** On the L3G4200D, `CTRL_REG3`'s `I2_DRDY` bit only routes Data-Ready to DRDY/INT2 — the INT1 pin is driven by a separate, unused programmable threshold interrupt generator. Wiring DRDY to INT1 instead will build and run without error but silently never produce an interrupt.
 
 ---
@@ -59,20 +70,40 @@ Each block runs as an independent CSP process.
 
 # 4. Interrupt Handling
 
-The gyro asserts DRDY/INT2 when new data is ready, wired to PB0 / EXTI0.
-
-The interrupt handler:
+The gyro asserts DRDY/INT2 when new data is ready, wired to PB0 / EXTI0 (rising edge). EXTI0 is
+enabled in the STM32CubeMX NVIC settings with "Uses FreeRTOS functions", priority 5 (numerically
+>= `configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY` = 5, as required for an interrupt that calls into
+CSP4CMSIS); CubeMX generates `EXTI0_IRQHandler()`, which calls the HAL, which calls
 
 ```cpp
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 ```
 
-does NOT perform SPI communication.
+The callback does NOT perform SPI communication. It only sends a trigger event into a CSP channel:
 
-It only sends a trigger event into a CSP channel:
+```cpp
+static SamplingBufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
+static IsrChanout<trigger_t> g_trigger_isr = g_trigger_chan.isrWriter();
+...
+g_trigger_isr.putFromISR(trigger_t{});
+```
+
 This keeps the interrupt short and safe.
 
-> **Note:** `HAL_GPIO_EXTI_Callback` is only ever reached if `EXTI0_IRQHandler()` exists in `stm32g4xx_it.c` and calls `HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0)`. STM32CubeMX does not always auto-generate an `EXTIx_IRQHandler` for every enabled line — double check it's present, since a missing handler falls through to the startup file's default (empty, infinite-loop) handler, which silently hangs the whole system on the very first interrupt with no fault raised.
+**Why not a rendezvous channel?** A rendezvous needs both partners to be ready at the same time, and
+an interrupt cannot wait. CSP4CMSIS therefore gives rendezvous channels no interrupt write path; an
+interrupt writes into a buffered channel, through its ISR writer end (`isrWriter()`).
+
+**Why capacity 1 and KeepNewest?** The trigger carries no data: it only says "a new sample is
+waiting in the sensor", and the sensor keeps only its latest sample. If triggers arrive while the
+L3g4200d process is still busy, they merge into one, and the next read gets the latest sample. A
+queue of triggers would only read the same registers several times. The write never blocks and
+never fails.
+
+**Why this matters:** the data-ready line stays high until the sample is read, and the interrupt
+fires on its rising edge. A trigger that got lost would leave the line high for ever: no new edge,
+no new trigger, the whole pipeline stopped, without any message. With the buffered trigger channel
+a trigger is never lost: if L3g4200d is busy, it finds the trigger waiting when it is ready again.
 
 # 5. L3g4200d Process (Sensor Layer)
 
@@ -157,9 +188,21 @@ CSP provides:
 - Clear process separation
 - Deterministic communication
 - No shared global data
-- Zero heap (static network mode)
+- No FreeRTOS heap allocation (static network, static threads): see Memory below
 
 This is good practice for real-time embedded systems.
+
+## Memory
+
+Measured on the board (Debug and Release):
+
+- **FreeRTOS heap: not used.** `pvPortMalloc()` is never called (0 allocations). The three processes,
+  `MainApp`, CubeMX's `defaultTask`, and FreeRTOS's idle and timer tasks all have static stacks and
+  control blocks; the buffered trigger channel's semaphores are static too
+  (`CSP4CMSIS_STATIC_ALLOCATION`), and the rendezvous channels need no RTOS objects. The FreeRTOS heap
+  (`configTOTAL_HEAP_SIZE`) is therefore set to only 1 KB.
+- **C library heap: 1 KB.** newlib's `printf()` allocates its `stdout` buffer with `malloc()` on first
+  use (1032 B from `_sbrk()`). This is the only dynamic allocation.
 
 # 9. Learning Outcomes
 This project demonstrates:
@@ -174,11 +217,25 @@ This project demonstrates:
 
 # 10. How To Build
 
-1. Open project in STM32CubeIDE
-1. Build
+1. Clone this repository (not inside your STM32CubeIDE workspace directory).
+1. In STM32CubeIDE: `File → Import → Existing Projects into Workspace`, select the cloned directory.
+1. Build (configuration `Debug` or `Release`).
 1. Flash to NUCLEO-G474RE
 1. Open serial terminal (115200 baud), e.g. `minicom -D /dev/ttyACM0 -b 115200 -o`
-1. Shake the board
+1. Shake the sensor
+
+The CSP4CMSIS settings are already in the project (G++ compiler, Debug and Release): include path
+`../lib/csp4cmsis/inc`, and the defines `CSP4CMSIS_RTOS2_BACKEND_FREERTOS`,
+`CSP4CMSIS_MAX_SYSCALL_INTERRUPT_PRIORITY=5`, `CSP4CMSIS_STATIC_ALLOCATION` and
+`CSP4CMSIS_DEVICE_HEADER="stm32g4xx.h"` (explained in the
+[CSP4CMSIS STM32CubeIDE guide](https://github.com/OliverFaust/CSP4CMSIS/blob/main/Documentation/CSP4CMSIS_STM32CubeIDE.md)).
+
+The `.ioc` can be opened and regenerated (GENERATE CODE) without losing anything: SPI2, EXTI0 and
+the FreeRTOS settings are stored in it, and the application's code in `main.c` and
+`FreeRTOSConfig.h` sits between `USER CODE BEGIN`/`END` markers.
+
+If the sensor is not connected or not answering, the console shows
+`L3G4200D Fault: WHO_AM_I failed after 100 attempts.` and `HAL-ERROR during init`.
 
 # 11. Example Output
 ```text
@@ -195,6 +252,10 @@ Shake ended.
 - LED indicator instead of printf
 - Machine learning classification
 - UART output mutex to prevent interleaved printf output across CSP processes
+
+# License
+
+MIT License – see the `LICENSE` file. CSP4CMSIS: MIT License, `lib/csp4cmsis/LICENSE`.
 
 # Author
 Dr Dr Oliver Faust
