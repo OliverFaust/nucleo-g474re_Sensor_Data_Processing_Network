@@ -17,7 +17,7 @@
 #define REG_CTRL5      0x24
 #define REG_STATUS     0x27
 
-#define READ_BIT       0x80
+#define SPI_READ       0x80   /* address bit 7: read (not READ_BIT: that is a CMSIS macro) */
 #define AUTO_INC       0x40
 
 static void cs_low(L3G4200D_t *dev)
@@ -43,7 +43,7 @@ HAL_StatusTypeDef write_reg(L3G4200D_t *dev, uint8_t reg, uint8_t data)
 
 HAL_StatusTypeDef read_reg(L3G4200D_t *dev, uint8_t reg, uint8_t *data)
 {
-    uint8_t tx[2] = {reg | READ_BIT, 0};
+    uint8_t tx[2] = {reg | SPI_READ, 0};
     uint8_t rx[2];
 
     cs_low(dev);
@@ -55,12 +55,12 @@ HAL_StatusTypeDef read_reg(L3G4200D_t *dev, uint8_t reg, uint8_t *data)
 }
 
 /**
- * @brief Enables Data Ready interrupt on the INT1 pin of the sensor
+ * @brief Enables the Data Ready signal on the sensor's DRDY/INT2 pin
  */
-HAL_StatusTypeDef L3G4200D_EnableINT1(L3G4200D_t *dev)
+HAL_StatusTypeDef L3G4200D_EnableDRDY(L3G4200D_t *dev)
 {
-    // CTRL_REG3 (0x22): Bit 3 is I1_DRDY
-    // Setting this to 1 routes the "Data Ready" signal to the INT1 pin
+    // CTRL_REG3 (0x22): bit 3 is I2_DRDY
+    // Setting it routes the "Data Ready" signal to the DRDY/INT2 pin
     uint8_t ctrl3 = 0x08;
     return write_reg(dev, REG_CTRL3, ctrl3);
 }
@@ -129,7 +129,7 @@ HAL_StatusTypeDef L3G4200D_Init(L3G4200D_t *dev, L3G4200D_Scale_t scale)
 HAL_StatusTypeDef L3G4200D_ReadRaw(L3G4200D_t *dev, int16_t *x, int16_t *y, int16_t *z)
 {
 	uint8_t tx[7] = {
-	    REG_OUT_X_L | READ_BIT | AUTO_INC,
+	    REG_OUT_X_L | SPI_READ | AUTO_INC,
 	    0,0,0,0,0,0
 	};
     uint8_t rx[7];

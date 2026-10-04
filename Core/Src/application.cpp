@@ -9,9 +9,8 @@ extern "C" {
 }
 
 // --- Configuration ---
-// PB0, configured GPIO_MODE_IT_RISING in main.c's MX_GPIO_Init(). (Was
-// GPIO_PIN_1 -- corrected to match the pin main.c actually arms for EXTI.)
-#define GYRO_INT1_PIN GPIO_PIN_0
+// PB0 (EXTI0, rising edge), wired to the gyro's DRDY/INT2 pin.
+#define GYRO_DRDY_PIN GPIO_PIN_0
 // main.c initializes hspi2, not hspi3; the CS pin it configures
 // (GPIOB/GPIO_PIN_12) matches what this driver expects below, so hspi2 is
 // almost certainly the intended handle. Update this if your board really
@@ -32,7 +31,7 @@ struct Result {
 };
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-    if (GPIO_Pin == GYRO_INT1_PIN) {
+    if (GPIO_Pin == GYRO_DRDY_PIN) {
         // putFromISR() performs the yield internally, on the caller's
         // behalf, before it returns -- no separate xHigherPriorityTaskWoken
         // handling or portYIELD_FROM_ISR() call is needed here.
@@ -59,8 +58,8 @@ public:
         if (HAL_ERROR == L3G4200D_Init(&gyro, L3G4200D_SCALE_250DPS)){
             printf("HAL-ERROR during init\r\n");
         }
-        if (HAL_ERROR == L3G4200D_EnableINT1(&gyro)){
-            printf("HAL-ERROR during INT1 enable\r\n");
+        if (HAL_ERROR == L3G4200D_EnableDRDY(&gyro)){
+            printf("HAL-ERROR during DRDY enable\r\n");
             return;
         }
 
