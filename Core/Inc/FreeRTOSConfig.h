@@ -68,16 +68,6 @@
 #define configTICK_RATE_HZ                       ((TickType_t)1000)
 #define configMAX_PRIORITIES                     ( 56 )
 #define configMINIMAL_STACK_SIZE                 ((uint16_t)128)
-/* Was 3072 -- too small to even create MainApp_Task: xTaskCreate()'s stack
- * argument is in words (StackType_t, 4 bytes on Cortex-M4), so a request of
- * 2048 words alone needs 8192 bytes from the heap, before the TCB or any
- * other dynamic allocation (e.g. defaultTask's 1024-byte stack via
- * osThreadNew()). 3072 bytes could never satisfy that single request, which
- * is why xTaskCreate() in csp_app_main_init() returned pdFAIL. Raised to
- * 15360 (the typical STM32CubeMX default for this heap size) for headroom;
- * right-size further once you've measured actual usage via
- * xPortGetFreeHeapSize()/xPortGetMinimumEverFreeHeapSize().
- */
 #define configTOTAL_HEAP_SIZE                    ((size_t)15360)
 #define configMAX_TASK_NAME_LEN                  ( 16 )
 #define configUSE_TRACE_FACILITY                 1
@@ -102,6 +92,9 @@
 #define configTIMER_TASK_PRIORITY                ( 2 )
 #define configTIMER_QUEUE_LENGTH                 10
 #define configTIMER_TASK_STACK_DEPTH             256
+
+/* The following flag must be enabled only when using newlib */
+#define configUSE_NEWLIB_REENTRANT          1
 
 /* CMSIS-RTOS V2 flags */
 #define configUSE_OS2_THREAD_SUSPEND_RESUME  1
