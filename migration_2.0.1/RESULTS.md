@@ -41,7 +41,7 @@ No firmware migration: the project was already on FW_G4 V1.6.3 / CubeMX 6.17.0.
 | defaultTask stack (1 KB) | none (deleted by hand) | 144 B (152 B after shaking) | 104 B |
 | Priorities processes / MainApp / defaultTask / EXTI0 | 2 / 3 / — / 15 | 8 / 16 / 24 / 5 | 8 / 16 / 24 / 5 |
 | FreeRTOS heap | 5 allocations, 2 frees | **0 allocations** (heap 1 KB) | **0 allocations** |
-| newlib `_sbrk` | 1032 B | 1032 B | 1032 B |
+| newlib `_sbrk` | 1032 B | 1032 B (0 B with unbuffered stdout, see Follow-up) | 1032 B (0 B, see Follow-up) |
 
 The shake counts differ because the shaking (by hand) differs between runs; both versions detect
 shakes and alternate correctly between the two messages. The stack figures without the sensor
@@ -72,6 +72,30 @@ other while they keep counting.)
   to the waiting reader, the rest merged"). Measured: 1. A buffered channel also buffers the first
   trigger instead of handing it to the waiting reader, so all 10 merge into one. Phase 1 was added
   because it is the case that separates the two versions.
+
+## Follow-up: no heap at all (unbuffered stdout)
+
+Decision: keep the "(Zero-Heap)" banner and make it true. `main.c` USER CODE 2:
+`setvbuf(stdout, NULL, _IONBF, 0);` before the first `printf` (commit `1b32e6c`). Measured on the
+board with the L3G4200D connected:
+
+| | 2.0.1 before | 2.0.1 Debug, unbuffered stdout | 2.0.1 Release, unbuffered stdout |
+|---|---|---|---|
+| FreeRTOS heap (heap_4 counters) | 0 allocations, 0 frees | **0 allocations, 0 frees** | **0 allocations, 0 frees** |
+| C library heap (newlib, `__sbrk_heap_end - _end`) | 1032 B (`printf`'s `stdout` buffer) | **0 B** (`__sbrk_heap_end` = 0: `_sbrk()` never called) | **0 B** (same) |
+| UART at rest (20 s) | banner | identical | identical |
+| Stacks L3g4200d / ShakeDetect / UI / MainApp / defaultTask | 540 / 512 / 320 / 572 / 144 B | 532 / 512 / 320 / **620** / 152 B | 428 / 388 / 212 / 308 / 104 B |
+| text / data / bss (B) | 53 616 / 132 / 14 496 | 53 992 / 132 / 14 496 | 31 644 / 112 / 14 408 |
+
+- Read again after a 120 s run (`results/noheap_after_120s_swd.txt`): FreeRTOS heap 0 allocations,
+  `_sbrk()` never called.
+- Data path with unbuffered stdout (instrumented copy of `1b32e6c`, overrun test): 939 data-ready
+  interrupts, 939 triggers, 0 write failures in 8 s; phase 1 and 2 as above.
+- MainApp's stack mark rises from 572 to 620 B (Debug) with unbuffered `printf`; 1.5 KB stays.
+  UI's 484 B after shaking (README) was measured with buffered stdout; with unbuffered stdout UI's
+  mark after shaking was not measured.
+- Shake detection with this image: verified by the author on the board (not recorded here).
+- Regeneration leaves `main.c` unchanged (the call is in USER CODE 2).
 
 ## Regeneration and fresh clone
 
@@ -129,8 +153,10 @@ algorithm, the console messages.
 12. Project setup: `lib/csp4cmsis/` = CSP4CMSIS 2.0.1 unmodified (`VERSION`, `LICENSE`); include path
     `../lib/csp4cmsis/inc`; four defines; GNU++17 in Debug and Release; no build output in the
     repository.
-13. Memory: no FreeRTOS heap allocation (measured; heap 1 KB), newlib's `printf` takes 1 KB. The
-    console banner still says "(Zero-Heap)"; decide whether to keep it.
+13. Memory: **zero heap**, measured: no FreeRTOS heap allocation (heap set to 1 KB) and no C library
+    heap: `setvbuf(stdout, NULL, _IONBF, 0)` in `main.c` USER CODE 2 stops newlib's `printf` from
+    allocating a 1 KB `stdout` buffer. The "(Zero-Heap)" banner is literal; the listing of `main.c`
+    shows the `setvbuf` line and why.
 14. "Interrupt-driven SPI acquisition" -> interrupt-triggered (the SPI transfer is polled).
 
 Logs: `results/` (`hw_*`, `shake_*`, `hw_overrun_*`, `baseline_sensor_*`: with the sensor;

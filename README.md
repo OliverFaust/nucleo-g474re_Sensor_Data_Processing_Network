@@ -188,7 +188,8 @@ CSP provides:
 - Clear process separation
 - Deterministic communication
 - No shared global data
-- No FreeRTOS heap allocation (static network, static threads): see Memory below
+- Zero heap: no FreeRTOS heap and no C library heap allocation (static network, static threads,
+  unbuffered stdout): see Memory below
 
 This is good practice for real-time embedded systems.
 
@@ -201,10 +202,12 @@ Measured on the board with the L3G4200D connected (Debug and Release):
   control blocks; the buffered trigger channel's semaphores are static too
   (`CSP4CMSIS_STATIC_ALLOCATION`), and the rendezvous channels need no RTOS objects. The FreeRTOS heap
   (`configTOTAL_HEAP_SIZE`) is therefore set to only 1 KB.
-- **C library heap: 1 KB.** newlib's `printf()` allocates its `stdout` buffer with `malloc()` on first
-  use (1032 B from `_sbrk()`). This is the only dynamic allocation.
-- **Stacks used** (Debug, after shaking; Release at rest in brackets): `L3g4200d` 540 B (428 B),
-  `ShakeDetect` 512 B (388 B), `UI` 484 B (212 B), each of 1 KB; `MainApp` 572 B (308 B) of 1.5 KB;
+- **C library heap: not used.** `main.c` (USER CODE 2) makes `stdout` unbuffered with
+  `setvbuf(stdout, NULL, _IONBF, 0)`; otherwise newlib's `printf()` would `malloc()` a 1 KB `stdout`
+  buffer on first use (measured: 1032 B). With it, `_sbrk()` is never called.
+- So the program allocates no heap memory at all: the "(Zero-Heap)" in the start-up banner is literal.
+- **Stacks used** (Debug; Release in brackets): `L3g4200d` 540 B (428 B), `ShakeDetect` 512 B
+  (388 B), `UI` 484 B after shaking (212 B at rest), each of 1 KB; `MainApp` 620 B (308 B) of 1.5 KB;
   `defaultTask` 152 B (104 B) of 1 KB.
 
 # 9. Learning Outcomes
