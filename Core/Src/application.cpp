@@ -174,7 +174,7 @@ static constexpr osPriority_t NETWORK_PRIORITY  = osPriorityLow;
 
 // MainApp's stack and control block are static: creating the thread takes no heap.
 // CMSIS-RTOS2 counts the stack in bytes: 384 words = 1.5 KB. Measured on the NUCLEO-G474RE:
-// MainApp uses 572 B (Debug, -O0) and 308 B (Release, -Os) of it.
+// MainApp uses 620 B (Debug, -O0) and 308 B (Release, -Os) of it.
 alignas(8) static uint32_t mainAppStack[384];
 static StaticTask_t mainAppControlBlock;
 
