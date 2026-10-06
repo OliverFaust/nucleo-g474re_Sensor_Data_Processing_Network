@@ -27,7 +27,7 @@ struct trigger_t {};
 // sample: triggers that arrive while L3g4200d is busy merge into one, and the next read gets
 // the latest sample. A trigger is never lost, so the data-ready line, which goes low only when
 // the sample is read, cannot get stuck high.
-static SamplingBufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
+static BufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
 static IsrChanout<trigger_t> g_trigger_isr = g_trigger_chan.isrWriter();
 
 struct Message {
@@ -54,7 +54,7 @@ public:
     void run() override {
     	trigger_t t;
     	auto trigger_reader = g_trigger_chan.reader();
-        SleepFor(Milliseconds(10).to_ticks());
+        SleepFor(Milliseconds(10));
         L3G4200D_t gyro;
         gyro.hspi = &hspi2;
         gyro.cs_port = GPIOB;
