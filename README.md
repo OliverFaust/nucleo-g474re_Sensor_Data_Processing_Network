@@ -7,7 +7,7 @@ It uses:
 
 - STM32CubeIDE
 - FreeRTOS with the CMSIS-RTOS v2 API (STM32CubeMX `CMSIS_V2` interface)
-- CSP4CMSIS 2.0.1 (Communicating Sequential Processes), in `lib/csp4cmsis/` (unmodified; see `lib/csp4cmsis/VERSION`)
+- CSP4CMSIS 3.0.0 (Communicating Sequential Processes), in `lib/csp4cmsis/` (unmodified; see `lib/csp4cmsis/VERSION`)
 - Interrupt-triggered SPI acquisition (the sensor's data-ready interrupt triggers each SPI read)
 - Real-time signal processing
 
@@ -21,7 +21,7 @@ Tested with:
 | STM32CubeIDE | 2.1.0 (GNU Tools for STM32 14.3.rel1) |
 | STM32CubeMX (only to regenerate code) | 6.17.0 |
 | STM32Cube FW_G4 | V1.6.3 (FreeRTOS 10.3.1) |
-| CSP4CMSIS | 2.0.1 |
+| CSP4CMSIS | 3.0.0 |
 
 ---
 
@@ -82,7 +82,7 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 The callback does NOT perform SPI communication. It only sends a trigger event into a CSP channel:
 
 ```cpp
-static SamplingBufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
+static BufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
 static IsrChanout<trigger_t> g_trigger_isr = g_trigger_chan.isrWriter();
 ...
 g_trigger_isr.putFromISR(trigger_t{});
@@ -200,7 +200,7 @@ Measured on the board with the L3G4200D connected (Debug and Release):
 - **FreeRTOS heap: not used.** `pvPortMalloc()` is never called (0 allocations). The three processes,
   `MainApp`, CubeMX's `defaultTask`, and FreeRTOS's idle and timer tasks all have static stacks and
   control blocks; the buffered trigger channel's semaphores are static too
-  (`CSP4CMSIS_STATIC_ALLOCATION`), and the rendezvous channels need no RTOS objects. The FreeRTOS heap
+  (CSP4CMSIS's default, static allocation), and the rendezvous channels need no RTOS objects. The FreeRTOS heap
   (`configTOTAL_HEAP_SIZE`) is therefore set to only 1 KB.
 - **C library heap: not used.** `main.c` (USER CODE 2) makes `stdout` unbuffered with
   `setvbuf(stdout, NULL, _IONBF, 0)`; otherwise newlib's `printf()` would `malloc()` a 1 KB `stdout`
@@ -231,9 +231,9 @@ This project demonstrates:
 1. Shake the sensor
 
 The CSP4CMSIS settings are already in the project (G++ compiler, Debug and Release): include path
-`../lib/csp4cmsis/inc`, and the defines `CSP4CMSIS_RTOS2_BACKEND_FREERTOS`,
-`CSP4CMSIS_MAX_SYSCALL_INTERRUPT_PRIORITY=5`, `CSP4CMSIS_STATIC_ALLOCATION` and
-`CSP4CMSIS_DEVICE_HEADER="stm32g4xx.h"` (explained in the
+`../lib/csp4cmsis/inc`, and the two defines
+`CSP4CMSIS_MAX_SYSCALL_INTERRUPT_PRIORITY=5` and `CSP4CMSIS_DEVICE_HEADER="stm32g4xx.h"`; CSP4CMSIS
+allocates its RTOS objects statically by default and finds FreeRTOS from `FreeRTOS.h` (explained in the
 [CSP4CMSIS STM32CubeIDE guide](https://github.com/OliverFaust/CSP4CMSIS/blob/main/Documentation/CSP4CMSIS_STM32CubeIDE.md)).
 
 The `.ioc` can be opened and regenerated (GENERATE CODE) without losing anything: SPI2, EXTI0 and
