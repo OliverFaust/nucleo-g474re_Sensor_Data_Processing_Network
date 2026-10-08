@@ -188,8 +188,7 @@ CSP provides:
 - Clear process separation
 - Deterministic communication
 - No shared global data
-- Zero heap: no FreeRTOS heap and no C library heap allocation (static network, static threads,
-  unbuffered stdout): see Memory below
+- Zero heap: no FreeRTOS heap and no C library heap allocation (see [Memory](#memory))
 
 This is good practice for real-time embedded systems.
 
