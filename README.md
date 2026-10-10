@@ -204,9 +204,9 @@ Measured on the board with the L3G4200D connected (Debug and Release):
   `setvbuf(stdout, NULL, _IONBF, 0)`; otherwise newlib's `printf()` would `malloc()` a 1 KB `stdout`
   buffer on first use (measured: 1032 B). With it, `_sbrk()` is never called.
 - So the program allocates no heap memory at all: the "(Zero-Heap)" in the start-up banner is literal.
-- **Stacks used** (Debug; Release in brackets): `L3g4200d` 540 B (428 B), `ShakeDetect` 512 B
-  (388 B), `UI` 484 B after shaking (212 B at rest), each of 1 KB; `MainApp` 620 B (308 B) of 1.5 KB;
-  `defaultTask` 152 B (104 B) of 1 KB.
+- **Stacks used** (Debug; Release in brackets): `L3g4200d` 508 B (364 B), `ShakeDetect` 512 B
+  (388 B), `UI` 320 B (212 B) at rest and 484 B after shaking (measured before the listing was simplified),
+  each of 1 KB; `MainApp` 584 B (272 B) of 1.5 KB.
 
 # 9. Learning Outcomes
 This project demonstrates:
