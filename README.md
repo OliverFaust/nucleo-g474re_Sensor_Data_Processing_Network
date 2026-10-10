@@ -82,10 +82,9 @@ extern "C" void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 The callback does NOT perform SPI communication. It only sends a trigger event into a CSP channel:
 
 ```cpp
-static BufferedChannel<trigger_t, 1, BufferPolicy::KeepNewest> g_trigger_chan;
-static IsrChanout<trigger_t> g_trigger_isr = g_trigger_chan.isrWriter();
+static BufferedChannel<bool, 1, BufferPolicy::KeepNewest> g_trigger_chan;
 ...
-g_trigger_isr.putFromISR(trigger_t{});
+g_trigger_chan.isrWriter().putFromISR(true);
 ```
 
 This keeps the interrupt short and safe.
@@ -188,8 +187,7 @@ CSP provides:
 - Clear process separation
 - Deterministic communication
 - No shared global data
-- Zero heap: no FreeRTOS heap and no C library heap allocation (static network, static threads,
-  unbuffered stdout): see Memory below
+- Zero heap: no FreeRTOS heap and no C library heap allocation (see [Memory](#memory))
 
 This is good practice for real-time embedded systems.
 
@@ -198,7 +196,7 @@ This is good practice for real-time embedded systems.
 Measured on the board with the L3G4200D connected (Debug and Release):
 
 - **FreeRTOS heap: not used.** `pvPortMalloc()` is never called (0 allocations). The three processes,
-  `MainApp`, CubeMX's `defaultTask`, and FreeRTOS's idle and timer tasks all have static stacks and
+  `MainApp`, and FreeRTOS's idle and timer tasks all have static stacks and
   control blocks; the buffered trigger channel's semaphores are static too
   (CSP4CMSIS's default, static allocation), and the rendezvous channels need no RTOS objects. The FreeRTOS heap
   (`configTOTAL_HEAP_SIZE`) is therefore set to only 1 KB.
@@ -206,9 +204,9 @@ Measured on the board with the L3G4200D connected (Debug and Release):
   `setvbuf(stdout, NULL, _IONBF, 0)`; otherwise newlib's `printf()` would `malloc()` a 1 KB `stdout`
   buffer on first use (measured: 1032 B). With it, `_sbrk()` is never called.
 - So the program allocates no heap memory at all: the "(Zero-Heap)" in the start-up banner is literal.
-- **Stacks used** (Debug; Release in brackets): `L3g4200d` 540 B (428 B), `ShakeDetect` 512 B
-  (388 B), `UI` 484 B after shaking (212 B at rest), each of 1 KB; `MainApp` 620 B (308 B) of 1.5 KB;
-  `defaultTask` 152 B (104 B) of 1 KB.
+- **Stacks used** (Debug; Release in brackets): `L3g4200d` 508 B (364 B), `ShakeDetect` 512 B
+  (388 B), `UI` 320 B (212 B) at rest and 484 B after shaking (measured before the listing was simplified),
+  each of 1 KB; `MainApp` 584 B (272 B) of 1.5 KB.
 
 # 9. Learning Outcomes
 This project demonstrates:
@@ -236,9 +234,9 @@ The CSP4CMSIS settings are already in the project (G++ compiler, Debug and Relea
 allocates its RTOS objects statically by default and finds FreeRTOS from `FreeRTOS.h` (explained in the
 [CSP4CMSIS STM32CubeIDE guide](https://github.com/OliverFaust/CSP4CMSIS/blob/main/Documentation/CSP4CMSIS_STM32CubeIDE.md)).
 
-The `.ioc` can be opened and regenerated (GENERATE CODE) without losing anything: SPI2, EXTI0 and
-the FreeRTOS settings are stored in it, and the application's code in `main.c` and
-`FreeRTOSConfig.h` sits between `USER CODE BEGIN`/`END` markers.
+The `.ioc` can be opened and regenerated (GENERATE CODE): SPI2, EXTI0 and the FreeRTOS settings are
+stored in it, and the application's code in `main.c` and `FreeRTOSConfig.h` sits between
+`USER CODE BEGIN`/`END` markers. defaultTask was removed from main.c; if you regenerate the project with CubeMX, delete it again.
 
 If the sensor is not connected or not answering, the console shows
 `L3G4200D Fault: WHO_AM_I failed after 100 attempts.` and `HAL-ERROR during init`.
