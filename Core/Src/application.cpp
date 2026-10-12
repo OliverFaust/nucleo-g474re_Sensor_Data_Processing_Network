@@ -1,7 +1,7 @@
 #include "application.h"
 #include "l3g4200d.h"
 #include "cmsis_os2.h"
-#include "FreeRTOS.h"  // StaticTask_t
+#include "FreeRTOS.h"
 #include "csp/csp4cmsis.h"
 #include <cstdio>
 #include <cmath>
@@ -9,16 +9,11 @@ extern "C" {
 #include "main.h"
 }
 
-// PB0 (EXTI0, rising edge), wired to the gyro's DRDY/INT2 pin.
 #define GYRO_DRDY_PIN GPIO_PIN_0
-// SPI2 (PB13 SCK, PB14 MISO, PB15 MOSI), initialised by main.c; chip select PB12.
 extern SPI_HandleTypeDef hspi2;
 
 using namespace csp;
 
-// Written by the data-ready interrupt: "a new sample is waiting". KeepNewest, capacity 1:
-// triggers that arrive while L3g4200d is busy merge into one, and none is lost, so the
-// data-ready line (low only after a read) cannot get stuck high.
 static BufferedChannel<bool, 1, BufferPolicy::KeepNewest> g_trigger_chan;
 
 struct Message {
@@ -55,7 +50,7 @@ public:
         }
 
         Message msg;
-        L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);  // clears a data-ready already pending
+        L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);
         while (true) {
             trigger_reader >> trigger;
             L3G4200D_ReadDPS(&gyro, &msg.x, &msg.y, &msg.z);
@@ -66,14 +61,14 @@ public:
 
 class ShakeDetect : public CSProcessStatic<256> {
     Chanin<Message> in;
-    Chanout<bool> out;  // true = shake started, false = shake ended
+    Chanout<bool> out;
 
 public:
     ShakeDetect(Chanin<Message> r, Chanout<bool> w) : in(r), out(w) {}
 
     void run() override {
-        const float alpha = 0.02f;          // mean filter speed
-        const int window_size = 10;         // ~100 ms at 100 Hz
+        const float alpha = 0.02f;
+        const int window_size = 10;
         const float threshold_on  = 3000.0f;
         const float threshold_off = 1500.0f;
 
@@ -87,14 +82,14 @@ public:
             in >> msg;
 
             float mag = sqrtf(msg.x * msg.x + msg.y * msg.y + msg.z * msg.z);
-            mean += alpha * (mag - mean);   // high-pass: subtract the running mean
+            mean += alpha * (mag - mean);
             float hp = mag - mean;
             energy += hp * hp;
             count++;
 
             if (count >= window_size) {
                 float avg_energy = energy / count;
-                if (!shaking && avg_energy > threshold_on) {        // hysteresis
+                if (!shaking && avg_energy > threshold_on) {
                     shaking = true;
                     out << true;
                 } else if (shaking && avg_energy < threshold_off) {
@@ -114,8 +109,6 @@ class UI : public CSProcessStatic<256> {
 public:
     explicit UI(Chanin<bool> r) : in(r) {}
 
-    // The only process that prints while the network runs (L3g4200d prints only before
-    // its first sample).
     void run() override {
         bool shaking;
         while (true) {
@@ -129,12 +122,9 @@ public:
     }
 };
 
-// MainApp runs above the network, so the processes first run after MainApp has printed
-// its banner and exited.
 static constexpr osPriority_t MAIN_APP_PRIORITY = osPriorityBelowNormal;
 static constexpr osPriority_t NETWORK_PRIORITY  = osPriorityLow;
 
-// Static stack (384 words = 1.5 KB) and control block: no heap.
 alignas(8) static uint32_t mainAppStack[384];
 static StaticTask_t mainAppControlBlock;
 

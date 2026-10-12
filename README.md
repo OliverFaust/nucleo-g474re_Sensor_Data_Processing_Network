@@ -3,6 +3,8 @@
 
 This project demonstrates interrupt-driven shake detection on the STM32 NUCLEO-G474RE using the L3G4200D gyroscope. It is a port of the original [NUCLEO-F401RE version](https://github.com/OliverFaust/CSP4CMSIS-shake-detection-NUCLEO-F401RE-) by Oliver Faust, adapted for the G4 series (different SPI instance, clock tree, and interrupt line).
 
+The explanations for this code are in the book; the source files deliberately contain no comments.
+
 It uses:
 
 - STM32CubeIDE
