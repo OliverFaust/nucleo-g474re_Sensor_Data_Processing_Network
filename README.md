@@ -9,7 +9,7 @@ It uses:
 
 - STM32CubeIDE
 - FreeRTOS with the CMSIS-RTOS v2 API (STM32CubeMX `CMSIS_V2` interface)
-- CSP4CMSIS 3.0.0 (Communicating Sequential Processes), in `lib/csp4cmsis/` (unmodified; see `lib/csp4cmsis/VERSION`)
+- CSP4CMSIS 3.0.1 (Communicating Sequential Processes), in `lib/csp4cmsis/` (unmodified; see `lib/csp4cmsis/VERSION`)
 - Interrupt-triggered SPI acquisition (the sensor's data-ready interrupt triggers each SPI read)
 - Real-time signal processing
 
@@ -23,7 +23,7 @@ Tested with:
 | STM32CubeIDE | 2.1.0 (GNU Tools for STM32 14.3.rel1) |
 | STM32CubeMX (only to regenerate code) | 6.17.0 |
 | STM32Cube FW_G4 | V1.6.3 (FreeRTOS 10.3.1) |
-| CSP4CMSIS | 3.0.0 |
+| CSP4CMSIS | 3.0.1 |
 
 ---
 
